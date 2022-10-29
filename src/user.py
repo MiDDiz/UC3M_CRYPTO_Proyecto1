@@ -8,13 +8,16 @@ class User:
         self.username=None
         self.review=None
 
-
     @staticmethod
-    def password_parser():
+    def password_parser(password: str) -> int:
         """
 
-        :return: int
+        :return: int value representing the validation state of the password.
         """
+        #TODO:REMOVE
+        return -1
+        # parser validated
+        return 0
 
 
     def store_user(self, usurname, passw)->bool:
