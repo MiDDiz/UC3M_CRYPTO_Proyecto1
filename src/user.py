@@ -48,6 +48,7 @@ class User:
         user_item={"usurname":usurname, "password":passw}
         return user_item
 
+
     def compare_passw(self, item1:dict, item2:dict)->bool:
         """
         Compares the password field from two dictionaries
