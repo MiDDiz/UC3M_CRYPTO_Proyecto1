@@ -31,16 +31,16 @@ class JsonStore:
         return newdata
 
 
-    def find_item(self, new_item):
+    def find_item(self, user:str):
         """
-        finds if there is some data connected to the same user
-        as the new data
-        :param new_item: new data
+        finds if there is some data connected to the same user of the imput
+
+        :param user:
         :return: Returns the found item if it finds one, or None if it don't
         """
         data = self.load_data()
         for item in data:
-            if item["usuario"] == new_item["usuario"]:
+            if item["usuario"] == user:
                 return item
         return None
 
@@ -69,6 +69,7 @@ class JsonStore:
         self.save_data(data)
 
 
+    #TODO: de momento no se usa, si al final del proyecto sigue sin usarse, eliminarla
     def additem(self, item:dict):
         """
         add new items, and replace them in case they already exist

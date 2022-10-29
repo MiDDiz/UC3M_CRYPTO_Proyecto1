@@ -28,7 +28,7 @@ class User:
         """
         store=JsonStore(user_path)
         new_user=self.create_user_item(usurname,passw)
-        found=store.find_item(new_user)
+        found=store.find_item(new_user["usurname"])
         if (found==None):
             print("Creando nuevo usuario!")
             store.addnew(new_user)
