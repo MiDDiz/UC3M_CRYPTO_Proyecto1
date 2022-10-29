@@ -1,19 +1,14 @@
-import tkinter as tk
-
+from ui.Interface import Interface
+from ui.InterfaceTuto import InterfaceTuto
 
 # Simple library encrypted exercise.
 
 def main():
-    print("Hello")
-    window = tk.Tk()
-    label = tk.Label(
-        text="CryptoNetflix",
-        foreground="white",  # Set the text color to white
-        background="grey"  # Set the background color to black
-    )
-    label.pack()
-    window.mainloop()
+    interface = Interface()
+    interface.mainloop()
 
+    interfaceTuto = InterfaceTuto()
+    #interfaceTuto.mainloop()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
