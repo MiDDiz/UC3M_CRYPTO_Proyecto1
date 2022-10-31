@@ -1,4 +1,5 @@
 from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from os import urandom
 
 
@@ -32,3 +33,32 @@ def generate_secret_datakey(passwd: str, salt: bytes) -> bytes:
     return digest.finalize()
 
 
+def encrypt_data(data_key: bytes, data: bytes) -> tuple[bytes, bytes]:
+    """
+    # USING AES256 -> Block size: 16 bytes
+    This method gets a secret key and some data to be encrypted.
+    :param data_key: Is the secret key to be used to encrypt data.
+    :param data: Data to be encrypted.
+    :return:    init_vector: We need to return init_vector in order to be able to decrypt the data after.
+                encrypted_message: The bytes of the encrypteed message.
+    """
+
+    # Generate input vector for cipher CBC mode.
+    init_vector = urandom(16)
+    cipher = Cipher(algorithms.AES256(data_key), modes.CTR(init_vector))
+    encryptor = cipher.encryptor()
+    encrypted_message = encryptor.update(data) + encryptor.finalize()
+    return init_vector, encrypted_message
+
+
+def decrypt_data(data_key: bytes, init_vector: bytes, message: bytes):
+    """
+    Decrypts the message with the data_key and the init_vector for CBC
+    :param data_key: the secret data_key
+    :param init_vector: the init_vector for CBC
+    :param message: the message to be decrypted
+    :return: the decrypted message
+    """
+    cipher = Cipher(algorithms.AES(data_key), modes.CBC(init_vector))
+    decryptor = cipher.decryptor()
+    return decryptor.update(message) + decryptor.finalize()

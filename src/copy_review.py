@@ -1,10 +1,8 @@
-import json
-import pathlib
 from json_store import JsonStore
 import encrypt
 
-#review_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/items.json"
-review_path = pathlib.Path().resolve().parent / "storage/items.json"
+review_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/items.json"
+
 
 class Review:
     def __init__(self, user):
@@ -22,31 +20,17 @@ class Review:
         new_rev = self.create_review_item(title, text, rating)
         store = JsonStore(review_path)
         # Search if the user have previus reviews
-        user_data = store.find_item(self.user.username)
+        user_data = store.find_item(self.user)
         if user_data != None:
             # If it have previus reviews, open the list of reviews
-            encrypted_reviews = str.encode(user_data["reviews"])
-            init_vector = str.encode(user_data["iv"])
-            print("Decoded init vector: " + str(init_vector))
-            # [{"title": algo, "review":otro, "score":otra},{...},...]
-            # We get the chunk above of data encrypted and we decrypt it into a str
-            data_decripted = encrypt.decrypt_data(self.user.data_key, init_vector, encrypted_reviews)
-            # Then the data is a string with the format of a list, where each item is sparated with a comma. So we
-            # parse that list.
-            """
-            user_reviews = str(data_decripted).split(",")
-            """
-            user_reviews = json.loads(str(data_decripted))
+            user_reviews = user_data["reviews"]
+
+
+
             updated = False
             # Checks if has a review on the same film/show
-            # Now for each item on the list
             for review in user_reviews:
-                """
-                # We transform that list item, that has the format of a dict,
-                # in a dict so we can work with it as JSON info.
-                review = json.loads(review)"""
                 # If it has, updates that review
-
                 if review["title"] == new_rev["title"]:
                     review["text"] = new_rev["text"]
                     review["rating"] = new_rev["rating"]
@@ -54,17 +38,14 @@ class Review:
             if not updated:
                 # If is a new review, it appends it to the previous ones
                 user_reviews.append(new_rev)
-            (in_vector, user_reviews_encrypted) = encrypt.encrypt_data(self.user.data_key, str.encode(str(user_reviews)))
             # Then, saves the new list of reviews instead of the old ones
-            store.replace_item(user_data, self.update_reviews(user_reviews_encrypted, in_vector))
+            store.replace_item(user_data, self.update_reviews(user_reviews))
         else:
             # If user don't have previous reviews, it creates a new list of reviews
             user_reviews = []
             user_reviews.append(new_rev)
-            # Encrypt user reviews
-            (in_vector, user_reviews_encrypted) = encrypt.encrypt_data(self.user.data_key, str.encode(str(user_reviews)))
             # Then creates a new entry in items with the user and his first review
-            store.addnew(self.update_reviews(user_reviews_encrypted, in_vector))
+            store.addnew(self.update_reviews(user_reviews))
 
     def create_review_item(self, title: str, text: str, rating: str) -> dict:
         """
@@ -77,13 +58,13 @@ class Review:
         new_review = {"title": title, "text": text, "rating": rating}
         return new_review
 
-    def update_reviews(self, user_reviews: bytes, input_vector: bytes) -> dict:
+    def update_reviews(self, user_reviews: list[dict]) -> dict:
         """
         Creates a new dict that wlii be stored in items.json with
         the user, and a list of his reviews
-        :param input_vector:
         :param user_reviews:
         :return:
         """
-        new_user_review = {"username": self.user.username, "reviews": str(user_reviews), "iv": str(input_vector)}
+        new_user_review = {"usuario": self.user, "reivews": user_reviews}
         return new_user_review
+

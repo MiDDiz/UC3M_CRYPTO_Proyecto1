@@ -1,9 +1,11 @@
+import pathlib
+
 from json_store import JsonStore
 import re
 import encrypt
 
-user_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/users.json"
-
+# user_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/users.json"
+user_path = pathlib.Path().resolve().parent / "storage/users.json"
 
 class User:
 
@@ -41,7 +43,7 @@ class User:
         """
         store = JsonStore(user_path)
         new_user = cls.create_user_item(usurname, passw)
-        found = store.find_item(new_user["usurname"])
+        found = store.find_item(new_user["username"])
         if (found == None):
             print("Creando nuevo usuario!")
             store.addnew(new_user)
@@ -50,7 +52,8 @@ class User:
         eq_passw = cls.compare_passw(found, new_user)
         return eq_passw
 
-    def create_user_item(self, usurname: str, passw: str) -> dict:
+    @staticmethod
+    def create_user_item(usurname: str, passw: str) -> dict:
         """
         Creates a new user that can be stored at a json
         :param usurname:
@@ -58,7 +61,7 @@ class User:
         :return: A dictionary that the .json will store
         """
         newsalt= encrypt.generate_salt()
-        user_item = {"usurname": usurname, "password": passw, "salt":newsalt}
+        user_item = {"username": usurname, "password": passw, "salt":newsalt}
         return user_item
 
     def compare_passw(self, item1: dict, item2: dict) -> bool:

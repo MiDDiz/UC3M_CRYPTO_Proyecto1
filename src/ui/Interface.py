@@ -1,7 +1,10 @@
 import tkinter
+
+from review import Review
 from user import User
 import customtkinter as customtk
 import encrypt
+
 
 
 class Interface(customtk.CTk):
@@ -9,6 +12,7 @@ class Interface(customtk.CTk):
     HEIGHT = 768
 
     def on_closing(self, event=0):
+        self.curr_user = None
         self.destroy()
 
     def entry_event(self):
@@ -49,9 +53,9 @@ class Interface(customtk.CTk):
                 return
         #Now, generate the datakey for the user
         newkey=encrypt.generate_secret_datakey(in_passwd, data_user["salt"])
-        new_user=User
-        new_user.data_key=newkey
-
+        self.curr_user = User()
+        self.curr_user.username = in_usr
+        self.curr_user.data_key = newkey
         self.login_frame.destroy()
         self._create_new_item_Activity()
 
@@ -59,7 +63,8 @@ class Interface(customtk.CTk):
         title = self.newitem_title_label.text
         review = self.newitem_review.textbox.get("1.0", tkinter.END)
         score = self.newitem_score_var.get()
-        print(f"Title: {title}, review: {review} Score: {score}")
+        new_review = Review(self.curr_user)
+        new_review.store_review(title, review, str(score))
 
     def newitem_goback(self):
         print("Atras")
