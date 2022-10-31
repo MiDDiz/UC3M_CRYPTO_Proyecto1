@@ -51,6 +51,7 @@ class Interface(customtk.CTk):
         self.geometry(f"{Interface.WIDTH}x{Interface.HEIGHT}")
         self.protocol("WN_DELETE_WINDOW", self.on_closing)
         self.resizable(False, False)
+        customtk.set_appearance_mode("Dark")
 
     def _create_entrform(self):
         """
