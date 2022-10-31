@@ -22,10 +22,11 @@ class Interface(customtk.CTk):
         in_usr = self.login_user_entry.get()
         in_passwd = self.login_passwd_entry.get()
         # print("Button pressed! Getting values: " + in_usr + " + " + in_passwd)
-        if User.password_parser(in_passwd) != 0:
+        if not User.password_parser(in_passwd):
             #    print("Bad passwd!")
             self._show_password_error_msg()
             self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
+            return
         # TODO: Checkear contra usuarios actuales
         self.login_frame.destroy()
         self._create_new_item_Activity()
@@ -129,7 +130,7 @@ class Interface(customtk.CTk):
         self.login_passwd_explanation = customtk.CTkLabel(master=self.login_info,
                                                           text="Debe tener menos de 8 carácteres, "
                                                                "debe contener una mayuscula, una minuscula, un digito y un "
-                                                               "carácter especial soportado.",
+                                                               "carácter especial soportado.\nLos carácteres soportados son: !@#$&*. Así mismo ,no puedes tener una contraseña muy común!",
                                                           text_font=("Roboto Medium", -10),
                                                           text_color="#%02x%02x%02x" % (255, 153, 153),
                                                           corner_radius=6,
@@ -192,7 +193,7 @@ class Interface(customtk.CTk):
                                                      text="Anota tu puntuación: ",
                                                      text_font=("Roboto Medium", -16),
                                                      padx=15, pady=15)
-        self.newitem_label_score.grid(column=0, row=3,columnspan=3, sticky="nw", padx=20, pady=10)
+        self.newitem_label_score.grid(column=0, row=3, columnspan=3, sticky="nw", padx=20, pady=10)
 
         self.newitem_score_var = tkinter.IntVar(value=0)
         self.newitem_score_frame = customtk.CTkFrame(master=self.newitem_frame,
@@ -200,23 +201,23 @@ class Interface(customtk.CTk):
                                                      width=800)
         self.newitem_score_frame.grid(column=0, row=4, columnspan=3, sticky="nwe", padx=20, pady=10)
         self.newitem_score_1 = customtk.CTkRadioButton(master=self.newitem_score_frame,
-                                                      variable=self.newitem_score_var,
-                                                      value=1,
-                                                      text="⭐")
+                                                       variable=self.newitem_score_var,
+                                                       value=1,
+                                                       text="⭐")
         self.newitem_score_frame.columnconfigure(0, weight=1)
         self.newitem_score_frame.columnconfigure(6, weight=1)
         self.newitem_score_1.grid(row=0, column=1, pady=10, padx=10, sticky="nwe")
 
         self.newitem_score_2 = customtk.CTkRadioButton(master=self.newitem_score_frame,
-                                                      variable=self.newitem_score_var,
-                                                      value=2,
-                                                      text="⭐⭐")
+                                                       variable=self.newitem_score_var,
+                                                       value=2,
+                                                       text="⭐⭐")
         self.newitem_score_2.grid(row=0, column=2, pady=10, padx=10, sticky="nwe")
 
         self.newitem_score_3 = customtk.CTkRadioButton(master=self.newitem_score_frame,
-                                                      variable=self.newitem_score_var,
-                                                      value=3,
-                                                      text="⭐⭐⭐")
+                                                       variable=self.newitem_score_var,
+                                                       value=3,
+                                                       text="⭐⭐⭐")
         self.newitem_score_3.grid(row=0, column=3, pady=10, padx=10, sticky="nwe")
 
         self.newitem_score_4 = customtk.CTkRadioButton(master=self.newitem_score_frame,
@@ -236,6 +237,6 @@ class Interface(customtk.CTk):
                                                         command=self.newitem_generate)
         self.newitem_sumbit_button.grid(row=5, column=0, pady=40, padx=180, sticky="nwe")
         self.newitem_back_button = customtk.CTkButton(master=self.newitem_frame,
-                                                        text="Atras",
-                                                        command=self.newitem_goback)
+                                                      text="Atras",
+                                                      command=self.newitem_goback)
         self.newitem_back_button.grid(row=5, column=2, pady=40, padx=180, sticky="nwe")
