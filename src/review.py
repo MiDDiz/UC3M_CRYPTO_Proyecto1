@@ -37,6 +37,8 @@ class Review:
             """
             user_reviews = str(data_decripted).split(",")
             """
+            data_decripted = base64.b64decode(data_decripted).decode("utf-8").replace("'", "\"")
+            print(data_decripted)
             user_reviews = json.loads(str(data_decripted))
             print(f"Decrypted data: {user_reviews}")
             updated = False
