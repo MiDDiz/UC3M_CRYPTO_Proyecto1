@@ -40,7 +40,7 @@ class JsonStore:
         """
         data = self.load_data()
         for item in data:
-            if item["usuario"] == user:
+            if item["usurname"] == user:
                 return item
         return None
 
