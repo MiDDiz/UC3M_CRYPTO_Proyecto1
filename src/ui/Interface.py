@@ -1,5 +1,6 @@
 import pathlib
 import tkinter
+import tkinter as tk
 from PIL import Image, ImageTk
 from review import Review
 from user import User
@@ -8,6 +9,42 @@ import encrypt
 
 img_path = pathlib.Path().resolve().parent / "images/"
 
+from tkinter import ttk
+
+import tkinter as tk
+
+class ScrollbarFrame(tk.Frame):
+    """
+    Extends class tk.Frame to support a scrollable Frame
+    This class is independent from the widgets to be scrolled and
+    can be used to replace a standard tk.Frame
+    """
+    def __init__(self, parent, **kwargs):
+        tk.Frame.__init__(self, parent, **kwargs)
+
+        # The Scrollbar, layout to the right
+        vsb = tk.Scrollbar(self, orient="vertical")
+        vsb.pack(side="right", fill="y")
+
+        # The Canvas which supports the Scrollbar Interface, layout to the left
+        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Bind the Scrollbar to the self.canvas Scrollbar Interface
+        self.canvas.configure(yscrollcommand=vsb.set)
+        vsb.configure(command=self.canvas.yview)
+
+        # The Frame to be scrolled, layout into the canvas
+        # All widgets to be scrolled have to use this Frame as parent
+        self.scrolled_frame = tk.Frame(self.canvas, background=self.canvas.cget('bg'))
+        self.canvas.create_window((4, 4), window=self.scrolled_frame, anchor="nw")
+
+        # Configures the scrollregion of the Canvas dynamically
+        self.scrolled_frame.bind("<Configure>", self.on_configure)
+
+    def on_configure(self, event):
+        """Set the scroll region to encompass the scrolled frame"""
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
 class Interface(customtk.CTk):
     WIDTH = 1024
@@ -404,23 +441,20 @@ class Interface(customtk.CTk):
 
         self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
-
-        self.canvas = tkinter.Canvas(self.viewrev_frame)
-        self.canvas.grid(row=0, column=0, sticky="news")
-
-        v = tkinter.Scrollbar(master=self.viewrev_frame, orient="vertical", command=self.canvas.yview)
-        v.grid(row=0, column=1, sticky='ns')
-        self.canvas.configure(yscrollcommand=v.set)
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
         # obtenemos todas las reviews
         self.viewrev_revframes = []
         self.viewrev_labels = []
         review = Review(self.curr_user)
         user_reviews = review.find_user_reviews(self.curr_user.username)
+        sbf = ScrollbarFrame(self.viewrev_frame)
+        self.viewrev_frame.grid_rowconfigure(0, weight=1)
+        self.viewrev_frame.grid_columnconfigure(0, weight=1)
+        sbf.grid(row=0, column=0, sticky='nsew')
+        frame = sbf.scrolled_frame
         for i, item in enumerate(user_reviews):
             print(f"I: {i}, Item: {item} ")
             self.viewrev_revframes.append(customtk.CTkFrame(
-                master=self.canvas,
+                master=frame,
                 width=Interface.WIDTH,
                 corner_radius=5
             ))
