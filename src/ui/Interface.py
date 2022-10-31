@@ -1,6 +1,7 @@
 import tkinter
 from user import User
 import customtkinter as customtk
+import encrypt
 
 
 class Interface(customtk.CTk):
@@ -28,6 +29,19 @@ class Interface(customtk.CTk):
             self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
             return
         # TODO: Checkear contra usuarios actuales
+        hash_passw = encrypt.passwordHash(in_passwd)
+        data_user=User.user_exists(in_usr)
+        if (data_user==None):
+            print("Bienbenido, nuevo usuario!")
+            new_user=User()
+            new_user.store_user(in_usr,hash_passw)
+        else:
+            if (data_user["password"]==hash_passw):
+                #TODO:dejar pasar al usuario
+                print("Sesión iniciada")
+            else:
+                #TODO: no dejar pasar al usuario
+                print("Contraseña incorrecta")
         self.login_frame.destroy()
         self._create_new_item_Activity()
 

@@ -1,6 +1,6 @@
 from json_store import JsonStore
 
-review_path="D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/users.json"
+review_path="D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/items.json"
 
 class Review:
     def __init__(self, user):

@@ -70,3 +70,7 @@ class User:
         else:
             return False
 
+    @staticmethod
+    def user_exists(user:str):
+        store=JsonStore(user_path)
+        return store.find_item(user)
