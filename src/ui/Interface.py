@@ -24,7 +24,7 @@ class Interface(customtk.CTk):
         in_passwd = self.login_passwd_entry.get()
 
 
-        hash_passw = encrypt.passwordHash(in_passwd)
+        hash_passw = encrypt.password_hash(in_passwd)
         data_user=User.user_exists(in_usr)
         if (data_user==None):
             if not User.password_parser(in_passwd):

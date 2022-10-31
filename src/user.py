@@ -8,7 +8,7 @@ class User:
 
     def __init__(self):
         self.username = None
-        self.review = None
+        self.data_key = None
 
     @staticmethod
     def password_parser(passwd: str) -> bool:
