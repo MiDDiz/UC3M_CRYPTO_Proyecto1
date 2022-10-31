@@ -270,3 +270,21 @@ class Interface(customtk.CTk):
                                                       text="Atras",
                                                       command=self.newitem_goback)
         self.newitem_back_button.grid(row=5, column=2, pady=40, padx=180, sticky="nwe")
+
+    def _create_mainmenu_Activity(self):
+
+        self.mainmenu_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        # 3 columns the middle one more important
+        self.mainmenu_frame.columnconfigure(0, weight=0)
+        self.mainmenu_frame.columnconfigure(1, weight=1)
+        self.mainmenu_frame.columnconfigure(2, weight=0)
+        # set master
+        self.mainmenu_frame.grid(row=0, column=0, sticky="news", padx=20, pady=20)
+        # generate subframes
+        self.mainmenu_leftframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.mainmenu_centralframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.mainmenu_rightframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        #set subframes
+        self.mainmenu_leftframe.grid(column=0, row=0, sticky="nwes", padx=20, pady=20)
+        self.mainmenu_centralframe.grid(column=1, row=0, sticky="nwes", padx=20, pady=20)
+        self.mainmenu_rightframe.grid(column=2, row=0, sticky="nwes", padx=20, pady=20)
