@@ -22,26 +22,25 @@ class Interface(customtk.CTk):
         """
         in_usr = self.login_user_entry.get()
         in_passwd = self.login_passwd_entry.get()
-        # print("Button pressed! Getting values: " + in_usr + " + " + in_passwd)
-        if not User.password_parser(in_passwd):
-            #    print("Bad passwd!")
-            self._show_password_error_msg()
-            self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
-            return
-        # TODO: Checkear contra usuarios actuales
+
+
         hash_passw = encrypt.passwordHash(in_passwd)
         data_user=User.user_exists(in_usr)
         if (data_user==None):
+            if not User.password_parser(in_passwd):
+                self._show_password_error_msg()
+                self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
+                return
             print("Bienbenido, nuevo usuario!")
             new_user=User()
             new_user.store_user(in_usr,hash_passw)
         else:
             if (data_user["password"]==hash_passw):
-                #TODO:dejar pasar al usuario
                 print("Sesión iniciada")
             else:
-                #TODO: no dejar pasar al usuario
+                #TODO: Mensaje de usuario existe pero contraseña incorrecta
                 print("Contraseña incorrecta")
+                return
         self.login_frame.destroy()
         self._create_new_item_Activity()
 
