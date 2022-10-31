@@ -11,8 +11,10 @@ def password_hash(passw: str) -> str:
     return dec_passw
 
 
-def generate_salt() -> bytes:
-    return urandom(32)
+def generate_salt() -> str:
+    newsalt= urandom(32)
+    newsalt=str(newsalt)
+    return newsalt
 
 
 def generate_secret_datakey(passwd: str, salt: bytes) -> bytes:
@@ -26,7 +28,7 @@ def generate_secret_datakey(passwd: str, salt: bytes) -> bytes:
     digest = hashes.Hash(hashes.SHA256())
     # update digest with
     digest.update(str.encode(passwd))
-    digest.update(salt)
+    digest.update(str.encode(salt))
     return digest.finalize()
 
 

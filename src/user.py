@@ -1,5 +1,6 @@
 from json_store import JsonStore
 import re
+import encrypt
 
 user_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/users.json"
 
@@ -28,7 +29,8 @@ class User:
             return False
         return True
 
-    def store_user(self, usurname, passw) -> bool:
+    @classmethod
+    def store_user(cls, usurname, passw) -> bool:
         """
         Search if a user exists, if it does not, it creates a new user,
         if it exists, checks if the password is correct
@@ -38,14 +40,14 @@ class User:
         is correct, false if the password is not correct
         """
         store = JsonStore(user_path)
-        new_user = self.create_user_item(usurname, passw)
+        new_user = cls.create_user_item(usurname, passw)
         found = store.find_item(new_user["usurname"])
         if (found == None):
             print("Creando nuevo usuario!")
             store.addnew(new_user)
             return True
 
-        eq_passw = self.compare_passw(found, new_user)
+        eq_passw = cls.compare_passw(found, new_user)
         return eq_passw
 
     def create_user_item(self, usurname: str, passw: str) -> dict:
@@ -55,7 +57,8 @@ class User:
         :param passw:
         :return: A dictionary that the .json will store
         """
-        user_item = {"usurname": usurname, "password": passw}
+        newsalt= encrypt.generate_salt()
+        user_item = {"usurname": usurname, "password": passw, "salt":newsalt}
         return user_item
 
     def compare_passw(self, item1: dict, item2: dict) -> bool:

@@ -23,17 +23,23 @@ class Interface(customtk.CTk):
         in_usr = self.login_user_entry.get()
         in_passwd = self.login_passwd_entry.get()
 
-
+        #generates the hash of the pasword
         hash_passw = encrypt.password_hash(in_passwd)
+        #Checks if the user exist
         data_user=User.user_exists(in_usr)
+        #If the user does not exist, it tries to create one
         if (data_user==None):
+            #If the password is not valid, then the user is not created
             if not User.password_parser(in_passwd):
                 self._show_password_error_msg()
                 self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
                 return
             print("Bienbenido, nuevo usuario!")
-            new_user=User()
-            new_user.store_user(in_usr,hash_passw)
+            #It stores the new user data in the json
+            User.store_user(in_usr,hash_passw)
+            #Then updates the data variable
+            data_user = User.user_exists(in_usr)
+        #If the user exists, checks if the password is correct
         else:
             if (data_user["password"]==hash_passw):
                 print("Sesión iniciada")
@@ -41,6 +47,11 @@ class Interface(customtk.CTk):
                 #TODO: Mensaje de usuario existe pero contraseña incorrecta
                 print("Contraseña incorrecta")
                 return
+        #Now, generate the datakey for the user
+        newkey=encrypt.generate_secret_datakey(in_passwd, data_user["salt"])
+        new_user=User
+        new_user.data_key=newkey
+
         self.login_frame.destroy()
         self._create_new_item_Activity()
 
