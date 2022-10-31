@@ -9,7 +9,6 @@ import encrypt
 img_path = pathlib.Path().resolve().parent / "images/"
 
 
-
 class Interface(customtk.CTk):
     WIDTH = 1024
     HEIGHT = 768
@@ -21,6 +20,7 @@ class Interface(customtk.CTk):
     def prompt_new_review(self, title):
 
         self._create_new_item_Activity(title)
+
     def entry_event(self):
         # TODO: Eliminar prints
         """
@@ -65,7 +65,6 @@ class Interface(customtk.CTk):
         self.curr_user.data_key = newkey
         self.login_frame.destroy()
         self._create_mainmenu_Activity()
-
 
     def load_image(self, path, image_size_x, image_size_y):
         """ load rectangular image with path relative to PATH """
@@ -315,73 +314,148 @@ class Interface(customtk.CTk):
         self.img_hunger = self.load_image("hunger.jpg", 80, 100)
         self.img_intocable = self.load_image("Intocable.jpg", 80, 100)
         self.img_midsomar = self.load_image("Midsommar.jpg", 80, 100)
-        self.img_startwars= self.load_image("starwars.jpg", 80, 100)
-        self.img_ironman= self.load_image("ironman.jpg", 80, 100)
-        self.img_pacific= self.load_image("Pacificrim.jpg", 80, 100)
+        self.img_startwars = self.load_image("starwars.jpg", 80, 100)
+        self.img_ironman = self.load_image("ironman.jpg", 80, 100)
+        self.img_pacific = self.load_image("Pacificrim.jpg", 80, 100)
 
-        #Avatar
+        # Avatar
         self.mainmenu_button_1 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_avatar,
                                                     text="Avatar",
                                                     height=152,
-                                                    compound="right", command= lambda : self.prompt_new_review("Avatar"))
+                                                    compound="right", command=lambda: self.prompt_new_review("Avatar"))
         self.mainmenu_button_1.grid(row=0, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #Cars
+        # Cars
         self.mainmenu_button_2 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_cars,
                                                     text="Cars",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Cars"))
+                                                    compound="right", command=lambda: self.prompt_new_review("Cars"))
         self.mainmenu_button_2.grid(row=0, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #Hp
+        # Hp
         self.mainmenu_button_3 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_harrypotter,
                                                     text="Harry\nPotter",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Harry Potter"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Harry Potter"))
         self.mainmenu_button_3.grid(row=0, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #Hunger
+        # Hunger
         self.mainmenu_button_4 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_hunger,
                                                     text="Hunger\nGames",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Hunger Games"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Hunger Games"))
         self.mainmenu_button_4.grid(row=1, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #Intocable
+        # Intocable
         self.mainmenu_button_5 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_intocable,
                                                     text="avatar",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Intocable"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Intocable"))
         self.mainmenu_button_5.grid(row=1, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #midsomar
+        # midsomar
         self.mainmenu_button_6 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_midsomar,
                                                     text="Midsommar",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Midsommar"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Midsommar"))
         self.mainmenu_button_6.grid(row=1, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #img_startwars
+        # img_startwars
         self.mainmenu_button_7 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_startwars,
                                                     text="Star Wars",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Star Wars"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Star Wars"))
         self.mainmenu_button_7.grid(row=2, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #ironman
+        # ironman
         self.mainmenu_button_8 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_ironman,
                                                     text="Iron\nMan",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Iron Man"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Iron Man"))
         self.mainmenu_button_8.grid(row=2, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
-        #img_pacific
+        # img_pacific
         self.mainmenu_button_9 = customtk.CTkButton(master=self.mainmenu_centralframe,
                                                     image=self.img_pacific,
                                                     text="Pacific\nRim",
                                                     height=152,
-                                                    compound="right", command=lambda : self.prompt_new_review("Pacific Rim"))
+                                                    compound="right",
+                                                    command=lambda: self.prompt_new_review("Pacific Rim"))
         self.mainmenu_button_9.grid(row=2, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        # end btn imgs
+        # button to see reviews
+        self.mainmenu_button_rev = customtk.CTkButton(master=self.mainmenu_rightframe,
+                                                      text="Ver reviews",
+                                                      height=30,
+                                                      command=self.go_to_see_reviews)
+        self.mainmenu_button_rev.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
+    def go_to_see_reviews(self):
+        self.mainmenu_frame.destroy()
+        self._create_viewrev_Activity()
 
     def _create_viewrev_Activity(self):
-        pass
+
+        self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
+        self.canvas = tkinter.Canvas(self.viewrev_frame)
+        self.canvas.grid(row=0, column=0, sticky="news")
+
+        v = tkinter.Scrollbar(master=self.viewrev_frame, orient="vertical", command=self.canvas.yview)
+        v.grid(row=0, column=1, sticky='ns')
+        self.canvas.configure(yscrollcommand=v.set)
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        # obtenemos todas las reviews
+        self.viewrev_revframes = []
+        self.viewrev_labels = []
+        review = Review(self.curr_user)
+        user_reviews = review.find_user_reviews(self.curr_user.username)
+        for i, item in enumerate(user_reviews):
+            print(f"I: {i}, Item: {item} ")
+            self.viewrev_revframes.append(customtk.CTkFrame(
+                master=self.canvas,
+                width=Interface.WIDTH,
+                corner_radius=5
+            ))
+            # Add review frame
+            self.viewrev_revframes[i].grid(column=0, row=i, sticky="news", padx=20, pady=20)
+            # Add title label
+            self.viewrev_labels.append([])
+            self.viewrev_labels[i].append(
+                customtk.CTkLabel(
+                    master=self.viewrev_revframes[i],
+                    text=item["title"],
+                    text_font=("Roboto Medium", -20),
+                    corner_radius=6,
+                    justify=tkinter.LEFT
+                )
+            )
+            self.viewrev_labels[i].append(
+                customtk.CTkLabel(
+                    master=self.viewrev_revframes[i],
+                    text=item["text"],
+                    text_font=("Roboto Medium", -14),
+                    corner_radius=6,
+                    justify=tkinter.LEFT
+                )
+            )
+            self.viewrev_labels[i].append(
+                customtk.CTkLabel(
+                    master=self.viewrev_revframes[i],
+                    text=f"Rating: {item['rating']}",
+                    text_font=("Roboto Medium", -14),
+                    corner_radius=6,
+                    justify=tkinter.LEFT
+                )
+            )
+            self.viewrev_labels[i][0].grid(column=0, row=0, sticky="news", padx=20, pady=20)
+            self.viewrev_labels[i][1].grid(column=0, row=1, sticky="news", padx=20, pady=20)
+            self.viewrev_labels[i][2].grid(column=0, row=2, sticky="news", padx=20, pady=20)
+            # Add text
