@@ -1,9 +1,12 @@
+import pathlib
 import tkinter
-
+from PIL import Image, ImageTk
 from review import Review
 from user import User
 import customtkinter as customtk
 import encrypt
+
+img_path = pathlib.Path().resolve().parent / "images/"
 
 
 
@@ -15,6 +18,9 @@ class Interface(customtk.CTk):
         self.curr_user = None
         self.destroy()
 
+    def prompt_new_review(self, title):
+
+        self._create_new_item_Activity(title)
     def entry_event(self):
         # TODO: Eliminar prints
         """
@@ -24,40 +30,46 @@ class Interface(customtk.CTk):
             - Old user bad info -> We got bad info, we need to notify it and wait again for an entry_event.
         :return: None
         """
+
         in_usr = self.login_user_entry.get()
         in_passwd = self.login_passwd_entry.get()
 
-        #generates the hash of the pasword
+        # generates the hash of the pasword
         hash_passw = encrypt.password_hash(in_passwd)
-        #Checks if the user exist
-        data_user=User.user_exists(in_usr)
-        #If the user does not exist, it tries to create one
-        if (data_user==None):
-            #If the password is not valid, then the user is not created
+        # Checks if the user exist
+        data_user = User.user_exists(in_usr)
+        # If the user does not exist, it tries to create one
+        if (data_user == None):
+            # If the password is not valid, then the user is not created
             if not User.password_parser(in_passwd):
                 self._show_password_error_msg()
                 self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
                 return
             print("Bienbenido, nuevo usuario!")
-            #It stores the new user data in the json
-            User.store_user(in_usr,hash_passw)
-            #Then updates the data variable
+            # It stores the new user data in the json
+            User.store_user(in_usr, hash_passw)
+            # Then updates the data variable
             data_user = User.user_exists(in_usr)
-        #If the user exists, checks if the password is correct
+        # If the user exists, checks if the password is correct
         else:
-            if (data_user["password"]==hash_passw):
+            if (data_user["password"] == hash_passw):
                 print("Sesión iniciada")
             else:
-                #TODO: Mensaje de usuario existe pero contraseña incorrecta
+                # TODO: Mensaje de usuario existe pero contraseña incorrecta
                 print("Contraseña incorrecta")
                 return
-        #Now, generate the datakey for the user
-        newkey=encrypt.generate_secret_datakey(in_passwd, data_user["salt"])
+        # Now, generate the datakey for the user
+        newkey = encrypt.generate_secret_datakey(in_passwd, data_user["salt"])
         self.curr_user = User()
         self.curr_user.username = in_usr
         self.curr_user.data_key = newkey
         self.login_frame.destroy()
-        self._create_new_item_Activity()
+        self._create_mainmenu_Activity()
+
+
+    def load_image(self, path, image_size_x, image_size_y):
+        """ load rectangular image with path relative to PATH """
+        return ImageTk.PhotoImage(Image.open(img_path / path).resize((image_size_x, image_size_y)))
 
     def newitem_generate(self):
         title = self.newitem_title_label.text
@@ -67,7 +79,8 @@ class Interface(customtk.CTk):
         new_review.store_review(title, review, str(score))
 
     def newitem_goback(self):
-        print("Atras")
+        self.newitem_frame.destroy()
+        self._create_mainmenu_Activity()
 
     def __init__(self):
         super().__init__()
@@ -180,7 +193,7 @@ class Interface(customtk.CTk):
         except AttributeError:
             pass
 
-    def _create_new_item_Activity(self):
+    def _create_new_item_Activity(self, title):
         """
         Esta es la funcion principal de create new Item
         :return:
@@ -201,7 +214,7 @@ class Interface(customtk.CTk):
                                                    justify=tkinter.LEFT)
         self.newitem_top_label.grid(column=1, row=0, sticky="nwe", padx=15, pady=15)
         self.newitem_title_label = customtk.CTkLabel(master=self.newitem_toptitle_frame,
-                                                     text="TOP GUN",  # TODO: sacar el titulo del activity.
+                                                     text=title,
                                                      text_font=("Roboto Medium", -20),
                                                      justify=tkinter.LEFT)
         self.newitem_top_label.grid(column=0, row=0, sticky="nwe", padx=15, pady=15)
@@ -272,7 +285,6 @@ class Interface(customtk.CTk):
         self.newitem_back_button.grid(row=5, column=2, pady=40, padx=180, sticky="nwe")
 
     def _create_mainmenu_Activity(self):
-
         self.mainmenu_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         # 3 columns the middle one more important
         self.mainmenu_frame.columnconfigure(0, weight=0)
@@ -281,10 +293,95 @@ class Interface(customtk.CTk):
         # set master
         self.mainmenu_frame.grid(row=0, column=0, sticky="news", padx=20, pady=20)
         # generate subframes
-        self.mainmenu_leftframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
-        self.mainmenu_centralframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
-        self.mainmenu_rightframe = customtk.CTkFrame(master=self, width=Interface.WIDTH)
-        #set subframes
-        self.mainmenu_leftframe.grid(column=0, row=0, sticky="nwes", padx=20, pady=20)
-        self.mainmenu_centralframe.grid(column=1, row=0, sticky="nwes", padx=20, pady=20)
-        self.mainmenu_rightframe.grid(column=2, row=0, sticky="nwes", padx=20, pady=20)
+        self.mainmenu_leftframe = customtk.CTkFrame(master=self.mainmenu_frame)
+        self.mainmenu_centralframe = customtk.CTkFrame(master=self.mainmenu_frame)
+        self.mainmenu_rightframe = customtk.CTkFrame(master=self.mainmenu_frame)
+        # set subframes
+        self.mainmenu_leftframe.grid(column=0, row=0, sticky="nwes", padx=10, pady=20)
+        self.mainmenu_centralframe.grid(column=1, row=0, sticky="nwes", padx=10, pady=20)
+        self.mainmenu_rightframe.grid(column=2, row=0, sticky="nwes", padx=10, pady=20)
+
+        self.mainmenu_centralframe.rowconfigure(0, weight=0)
+        self.mainmenu_centralframe.rowconfigure(1, weight=0)
+        self.mainmenu_centralframe.rowconfigure(2, weight=0)
+        self.mainmenu_centralframe.columnconfigure(0, weight=0)
+        self.mainmenu_centralframe.rowconfigure(1, weight=0)
+        self.mainmenu_centralframe.rowconfigure(2, weight=0)
+
+        # generate img
+        self.img_avatar = self.load_image("avatar.jpg", 80, 100)
+        self.img_cars = self.load_image("Cars.jpg", 80, 100)
+        self.img_harrypotter = self.load_image("harrypotter.jpg", 80, 100)
+        self.img_hunger = self.load_image("hunger.jpg", 80, 100)
+        self.img_intocable = self.load_image("Intocable.jpg", 80, 100)
+        self.img_midsomar = self.load_image("Midsommar.jpg", 80, 100)
+        self.img_startwars= self.load_image("starwars.jpg", 80, 100)
+        self.img_ironman= self.load_image("ironman.jpg", 80, 100)
+        self.img_pacific= self.load_image("Pacificrim.jpg", 80, 100)
+
+        #Avatar
+        self.mainmenu_button_1 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_avatar,
+                                                    text="Avatar",
+                                                    height=152,
+                                                    compound="right", command= lambda : self.prompt_new_review("Avatar"))
+        self.mainmenu_button_1.grid(row=0, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #Cars
+        self.mainmenu_button_2 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_cars,
+                                                    text="Cars",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Cars"))
+        self.mainmenu_button_2.grid(row=0, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #Hp
+        self.mainmenu_button_3 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_harrypotter,
+                                                    text="Harry\nPotter",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Harry Potter"))
+        self.mainmenu_button_3.grid(row=0, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #Hunger
+        self.mainmenu_button_4 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_hunger,
+                                                    text="Hunger\nGames",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Hunger Games"))
+        self.mainmenu_button_4.grid(row=1, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #Intocable
+        self.mainmenu_button_5 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_intocable,
+                                                    text="avatar",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Intocable"))
+        self.mainmenu_button_5.grid(row=1, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #midsomar
+        self.mainmenu_button_6 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_midsomar,
+                                                    text="Midsommar",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Midsommar"))
+        self.mainmenu_button_6.grid(row=1, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #img_startwars
+        self.mainmenu_button_7 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_startwars,
+                                                    text="Star Wars",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Star Wars"))
+        self.mainmenu_button_7.grid(row=2, column=0, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #ironman
+        self.mainmenu_button_8 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_ironman,
+                                                    text="Iron\nMan",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Iron Man"))
+        self.mainmenu_button_8.grid(row=2, column=1, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+        #img_pacific
+        self.mainmenu_button_9 = customtk.CTkButton(master=self.mainmenu_centralframe,
+                                                    image=self.img_pacific,
+                                                    text="Pacific\nRim",
+                                                    height=152,
+                                                    compound="right", command=lambda : self.prompt_new_review("Pacific Rim"))
+        self.mainmenu_button_9.grid(row=2, column=2, columnspan=1, padx=5, pady=(20, 10), sticky="news")
+
+    def _create_viewrev_Activity(self):
+        pass
