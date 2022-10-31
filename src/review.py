@@ -82,6 +82,20 @@ class Review:
         print(f"Decrypted data: {user_reviews}")
         return user_reviews
 
+    @classmethod
+    def find_user_reviews(cls,username:str)->str:
+        store = JsonStore(review_path)
+        user_data = store.find_item(username)
+        return cls.decode_actual_userdata(user_data)
+
+    @classmethod
+    def find_single_review(cls, username:str, title:str):
+        user_reviews=cls.find_user_reviews(username)
+        for rev in user_reviews:
+            if rev["title"]==title:
+                return rev
+        return None
+
     def create_review_item(self, title: str, text: str, rating: str) -> dict:
         """
         Creates a new dictionary item with the review
