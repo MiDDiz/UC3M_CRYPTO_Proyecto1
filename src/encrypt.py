@@ -59,6 +59,6 @@ def decrypt_data(data_key: bytes, init_vector: bytes, message: bytes):
     :param message: the message to be decrypted
     :return: the decrypted message
     """
-    cipher = Cipher(algorithms.AES(data_key), modes.CBC(init_vector))
+    cipher = Cipher(algorithms.AES(data_key), modes.CTR(init_vector))
     decryptor = cipher.decryptor()
     return decryptor.update(message) + decryptor.finalize()
