@@ -109,7 +109,10 @@ class Interface(customtk.CTk):
 
     def newitem_generate(self):
         title = self.newitem_title_label.text
-        review = self.newitem_review.textbox.get("1.0", tkinter.END)
+        # Low cost sanitizer
+        review = self.newitem_review.textbox.get("1.0", tkinter.END).\
+            replace("\"", "").replace("'", "").replace(":", "")\
+            .replace("{", "").replace("}", "").replace("[", "").replace("]", "")
         score = self.newitem_score_var.get()
         new_review = Review(self.curr_user)
         new_review.store_review(title, review, str(score))
