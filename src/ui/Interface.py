@@ -77,10 +77,6 @@ class Interface(customtk.CTk):
         new_review = Review(self.curr_user)
         new_review.store_review(title, review, str(score))
 
-    def newitem_goback(self):
-        self.newitem_frame.destroy()
-        self._create_mainmenu_Activity()
-
     def __init__(self):
         super().__init__()
 
@@ -280,7 +276,7 @@ class Interface(customtk.CTk):
         self.newitem_sumbit_button.grid(row=5, column=0, pady=40, padx=180, sticky="nwe")
         self.newitem_back_button = customtk.CTkButton(master=self.newitem_frame,
                                                       text="Atras",
-                                                      command=self.newitem_goback)
+                                                      command=lambda:self.goback(self.newitem_frame))
         self.newitem_back_button.grid(row=5, column=2, pady=40, padx=180, sticky="nwe")
 
     def _create_mainmenu_Activity(self):
@@ -476,5 +472,43 @@ class Interface(customtk.CTk):
 
     def _create_crfilm_Activity(self):
 
-        self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
-        self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+        self.crfilm_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.crfilm_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
+        self.crfilm_frame.rowconfigure(0, weight=0)
+        self.crfilm_frame.rowconfigure(1, weight=1)
+        self.crfilm_frame.rowconfigure(2, weight=0)
+
+        self.critem_label_review = customtk.CTkLabel(master=self.crfilm_frame,
+                                                      text="Escribe el título de la nueva película: ",
+                                                      text_font=("Roboto Medium", -16),
+                                                      padx=15, pady=15)
+        self.critem_label_review.grid(column=0, row=0, sticky="nw", padx=20, pady=20)
+        self.critem_review = customtk.CTkTextbox(master=self.crfilm_frame,
+                                                  padx=15,
+                                                  pady=15,
+                                                  text_font=("Roboto Medium", -16),
+                                                  )
+        self.critem_review.grid(column=0, row=1, sticky="news", padx=20, pady=5)
+
+        self.critem_submitframe = customtk.CTkFrame(master=self.crfilm_frame)
+        self.critem_submitframe.grid(column=0, row=2, sticky="nwes", padx=10, pady=20)
+        self.critem_submitframe.columnconfigure(0, weight=0)
+        self.critem_submitframe.columnconfigure(1, weight=0)
+
+
+        self.critem_sumbit_button = customtk.CTkButton(master=self.critem_submitframe,
+                                                        text="Enviar",
+                                                        command=self.critem_generate)
+        self.critem_sumbit_button.grid(row=0, column=0, pady=40, padx=180, sticky="nwe")
+        self.critem_back_button = customtk.CTkButton(master=self.critem_submitframe,
+                                                      text="Atras",
+                                                      command=lambda: self.goback(self.crfilm_frame))
+        self.critem_back_button.grid(row=0, column=1, pady=40, padx=180, sticky="nwe")
+
+    def goback(self,frame):
+        frame.destroy()
+        self._create_mainmenu_Activity()
+
+    def critem_generate(self):
+        title = self.critem_review.textbox.get("1.0", tkinter.END)
