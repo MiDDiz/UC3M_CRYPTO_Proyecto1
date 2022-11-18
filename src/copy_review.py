@@ -20,7 +20,7 @@ class Review:
         new_rev = self.create_review_item(title, text, rating)
         store = JsonStore(review_path)
         # Search if the user have previus reviews
-        user_data = store.find_item(self.user)
+        user_data = store.find_item_usr(self.user)
         if user_data != None:
             # If it have previus reviews, open the list of reviews
             user_reviews = user_data["reviews"]

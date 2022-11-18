@@ -23,7 +23,7 @@ class Review:
         new_rev = self.create_review_item(title, text, rating)
         store = JsonStore(review_path)
         # Search if the user have previus reviews
-        user_data = store.find_item(self.user.username)
+        user_data = store.find_item_usr(self.user.username)
         if user_data != None:
             self.overwrite_act_userdata(new_rev, store, user_data)
         else:
@@ -85,7 +85,7 @@ class Review:
 
     def find_user_reviews(self,username:str)->str:
         store = JsonStore(review_path)
-        user_data = store.find_item(username)
+        user_data = store.find_item_usr(username)
         return self.decode_actual_userdata(user_data)
 
 

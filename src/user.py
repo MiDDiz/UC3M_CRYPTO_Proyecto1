@@ -43,7 +43,7 @@ class User:
         """
         store = JsonStore(user_path)
         new_user = cls.create_user_item(usurname, passw)
-        found = store.find_item(new_user["username"])
+        found = store.find_item_usr(new_user["username"])
         if (found == None):
             print("Creando nuevo usuario!")
             store.addnew(new_user)
@@ -79,4 +79,4 @@ class User:
     @staticmethod
     def user_exists(user:str):
         store=JsonStore(user_path)
-        return store.find_item(user)
+        return store.find_item_usr(user)
