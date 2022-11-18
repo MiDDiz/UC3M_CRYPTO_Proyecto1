@@ -80,6 +80,7 @@ class Interface(customtk.CTk):
         score = self.newitem_score_var.get()
         new_review = Review(self.curr_user)
         new_review.store_review(title, review, str(score))
+        self.goback(self.newitem_frame)
 
     def __init__(self):
         super().__init__()
@@ -409,13 +410,21 @@ class Interface(customtk.CTk):
         self._create_viewrev_Activity()
 
     def _create_viewrev_Activity(self):
-        self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+
+        self.viewrev_main = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+
+        self.viewrev_main.grid(row=0, column=0, columnspan=1, sticky="news")
+
+
+        self.viewrev_frame = customtk.CTkFrame(master=self.viewrev_main, width=Interface.WIDTH)
+
+
+
         self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
-        self.viewrev_backbutton = customtk.CTkButton(master=self,
+        self.viewrev_backbutton = customtk.CTkButton(master=self.viewrev_main,
                                                      text="Ir atrás",
-                                                     command=self.entry_event,
-
+                                                     command=lambda : self.goback(self.viewrev_main)
                                                      )
 
         self.viewrev_backbutton.grid(row=0, column=1, columnspan=1, padx=10, pady=10, sticky="e")
@@ -520,7 +529,7 @@ class Interface(customtk.CTk):
                                                       command=lambda: self.goback(self.crfilm_frame))
         self.critem_back_button.grid(row=0, column=1, pady=40, padx=180, sticky="nwe")
 
-    def goback(self,frame):
+    def goback(self, frame):
         frame.destroy()
         self._create_mainmenu_Activity()
 

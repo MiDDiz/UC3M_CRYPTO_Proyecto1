@@ -1,5 +1,8 @@
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, generate_private_key, RSAPublicKey
 from os import urandom
 
 
@@ -13,8 +16,8 @@ def password_hash(passw: str) -> str:
 
 
 def generate_salt() -> str:
-    newsalt= urandom(32)
-    newsalt=str(newsalt)
+    newsalt = urandom(32)
+    newsalt = str(newsalt)
     return newsalt
 
 
@@ -62,3 +65,60 @@ def decrypt_data(data_key: bytes, init_vector: bytes, message: bytes):
     cipher = Cipher(algorithms.AES(data_key), modes.CTR(init_vector))
     decryptor = cipher.decryptor()
     return decryptor.update(message) + decryptor.finalize()
+
+
+def get_private_key() -> RSAPrivateKey:
+    """
+    :return: Returns a newly generated private key
+    """
+    return generate_private_key(
+        public_exponent=65537,
+        key_size=4096,
+    )
+
+
+def get_public_key(private_key: RSAPrivateKey) -> RSAPublicKey:
+    """
+    Re-encapsulation of the method below.
+    :param private_key: The private key from the public key
+    :return: Returns the public key from the private key
+    """
+    private_key.public_key()
+
+
+def sign_message(message: bytes, private_key: RSAPrivateKey) -> bytes:
+    """
+    Retruns the signature of the un-hashed message
+    :param message:
+    :param private_key:
+    :return:
+    """
+    return private_key.sign(
+        message,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+
+
+def verify_signature(signature: bytes, message: bytes, public_key: RSAPublicKey) -> bool:
+    try:
+        public_key.verify(
+            signature,
+            message,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        # Signature is valid
+        return True
+    except InvalidSignature:
+        # Simply put the signature is invalid
+        return False
+    except Exception as e:
+        # Unexpected error
+        raise ValueError("Fatal error handling verification signature") from e
