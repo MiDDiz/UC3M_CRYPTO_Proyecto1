@@ -396,6 +396,14 @@ class Interface(customtk.CTk):
                                                       command=self.go_to_see_reviews)
         self.mainmenu_button_rev.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
+
+        self.mainmenu_button_crfilm = customtk.CTkButton(master=self.mainmenu_rightframe,
+                                                      text="Crear película",
+                                                      height=30,
+                                                      command=self.go_to_create_film)
+        
+        self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
     def go_to_see_reviews(self):
         self.mainmenu_frame.destroy()
         self._create_viewrev_Activity()
@@ -459,3 +467,14 @@ class Interface(customtk.CTk):
             self.viewrev_labels[i][1].grid(column=0, row=1, sticky="news", padx=20, pady=20)
             self.viewrev_labels[i][2].grid(column=0, row=2, sticky="news", padx=20, pady=20)
             # Add text
+
+
+    def go_to_create_film(self):
+        self.mainmenu_frame.destroy()
+        self._create_crfilm_Activity()
+
+
+    def _create_crfilm_Activity(self):
+
+        self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
