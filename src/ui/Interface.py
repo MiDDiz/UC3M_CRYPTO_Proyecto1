@@ -8,42 +8,7 @@ import encrypt
 
 img_path = pathlib.Path().resolve().parent / "images/"
 
-from tkinter import ttk
-
 import tkinter as tk
-
-class ScrollbarFrame(tk.Frame):
-    """
-    Extends class tk.Frame to support a scrollable Frame
-    This class is independent from the widgets to be scrolled and
-    can be used to replace a standard tk.Frame
-    """
-    def __init__(self, parent, **kwargs):
-        tk.Frame.__init__(self, parent, **kwargs)
-
-        # The Scrollbar, layout to the right
-        vsb = tk.Scrollbar(self, orient="vertical")
-        vsb.pack(side="right", fill="y")
-
-        # The Canvas which supports the Scrollbar Interface, layout to the left
-        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
-        self.canvas.pack(side="left", fill="both", expand=True)
-
-        # Bind the Scrollbar to the self.canvas Scrollbar Interface
-        self.canvas.configure(yscrollcommand=vsb.set)
-        vsb.configure(command=self.canvas.yview)
-
-        # The Frame to be scrolled, layout into the canvas
-        # All widgets to be scrolled have to use this Frame as parent
-        self.scrolled_frame = tk.Frame(self.canvas, background=self.canvas.cget('bg'))
-        self.canvas.create_window((4, 4), window=self.scrolled_frame, anchor="nw")
-
-        # Configures the scrollregion of the Canvas dynamically
-        self.scrolled_frame.bind("<Configure>", self.on_configure)
-
-    def on_configure(self, event):
-        """Set the scroll region to encompass the scrolled frame"""
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
 class Interface(customtk.CTk):
     WIDTH = 1024
@@ -444,70 +409,75 @@ class Interface(customtk.CTk):
         self._create_viewrev_Activity()
 
     def _create_viewrev_Activity(self):
-
         self.viewrev_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
-        self.canvas = tkinter.Canvas(self.viewrev_frame)
-        self.canvas.grid(row=0, column=0, sticky="news")
+        self.viewrev_backbutton = customtk.CTkButton(master=self,
+                                                     text="Ir atrás",
+                                                     command=self.entry_event,
 
-        v = tkinter.Scrollbar(master=self.viewrev_frame, orient="vertical", command=self.canvas.yview)
-        v.grid(row=0, column=1, sticky='ns')
-        self.canvas.configure(yscrollcommand=v.set)
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        # obtenemos todas las reviews
-        self.viewrev_revframes = []
-        self.viewrev_labels = []
-        review = Review(self.curr_user)
-        user_reviews = review.find_user_reviews(self.curr_user.username)
-        sbf = ScrollbarFrame(self.viewrev_frame)
-        self.viewrev_frame.grid_rowconfigure(0, weight=1)
-        self.viewrev_frame.grid_columnconfigure(0, weight=1)
-        sbf.grid(row=0, column=0, sticky='nsew')
-        frame = sbf.scrolled_frame
+                                                     )
+
+        self.viewrev_backbutton.grid(row=0, column=1, columnspan=1, padx=10, pady=10, sticky="e")
+
+        canvas = tk.Canvas(self.viewrev_frame, bg="black", width=self.WIDTH - 200, height=self.HEIGHT-30, highlightthickness=0)
+        scrolly = tk.Scrollbar(self.viewrev_frame, orient='vertical', command=canvas.yview)
+
+        reviews = Review(self.curr_user)
+        user_reviews = reviews.find_user_reviews(self.curr_user.username)
+
+        viewrev_revframes = []
+        viewrev_labels = []
+
+        # display elements in the canvas
         for i, item in enumerate(user_reviews):
             print(f"I: {i}, Item: {item} ")
-            self.viewrev_revframes.append(customtk.CTkFrame(
-                master=frame,
+            viewrev_revframes.append(customtk.CTkFrame(
+                master=canvas,
                 width=Interface.WIDTH,
                 corner_radius=5
             ))
-            # Add review frame
-            self.viewrev_revframes[i].grid(column=0, row=i, sticky="news", padx=20, pady=20)
-            # Add title label
-            self.viewrev_labels.append([])
-            self.viewrev_labels[i].append(
+            viewrev_labels.append([])
+            viewrev_labels[i].append(
                 customtk.CTkLabel(
-                    master=self.viewrev_revframes[i],
+                    master=viewrev_revframes[i],
                     text=item["title"],
                     text_font=("Roboto Medium", -20),
                     corner_radius=6,
                     justify=tkinter.LEFT
                 )
             )
-            self.viewrev_labels[i].append(
+            viewrev_labels[i].append(
                 customtk.CTkLabel(
-                    master=self.viewrev_revframes[i],
+                    master=viewrev_revframes[i],
                     text=item["text"],
                     text_font=("Roboto Medium", -14),
                     corner_radius=6,
-                    justify=tkinter.LEFT
+                    justify=tkinter.LEFT,
+                    wraplength=800
                 )
             )
-            self.viewrev_labels[i].append(
+            viewrev_labels[i].append(
                 customtk.CTkLabel(
-                    master=self.viewrev_revframes[i],
+                    master=viewrev_revframes[i],
                     text=f"Rating: {item['rating']}",
                     text_font=("Roboto Medium", -14),
                     corner_radius=6,
                     justify=tkinter.LEFT
                 )
             )
-            self.viewrev_labels[i][0].grid(column=0, row=0, sticky="news", padx=20, pady=20)
-            self.viewrev_labels[i][1].grid(column=0, row=1, sticky="news", padx=20, pady=20)
-            self.viewrev_labels[i][2].grid(column=0, row=2, sticky="news", padx=20, pady=20)
-            # Add text
+            viewrev_labels[i][0].grid(column=0, row=0, sticky="news", padx=20, pady=20)
+            viewrev_labels[i][1].grid(column=0, row=1, sticky="news", padx=20, pady=20)
+            viewrev_labels[i][2].grid(column=0, row=2, sticky="news", padx=20, pady=20)
+            canvas.create_window(100, i * 350, anchor='nw', window=viewrev_revframes[i],
+                                 height=300, width=self.WIDTH - 180)
+            viewrev_labels.append([])
 
+
+
+        canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
+        canvas.pack(fill='both', expand=True, side='left')
+        scrolly.pack(fill='y', side='right')
 
     def go_to_create_film(self):
         self.mainmenu_frame.destroy()
