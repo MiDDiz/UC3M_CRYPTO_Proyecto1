@@ -3,6 +3,7 @@ import pathlib
 from json_store import JsonStore
 import re
 import encrypt
+import base64
 
 # user_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/users.json"
 user_path = pathlib.Path().resolve().parent / "storage/users.json"
@@ -60,8 +61,16 @@ class User:
         :param passw:
         :return: A dictionary that the .json will store
         """
+        #Generacion del salt para cada usuario
         newsalt= encrypt.generate_salt()
-        user_item = {"username": usurname, "password": passw, "salt":newsalt}
+        #Generacion de claves públicas y privadas
+        #TODO:Almacenar la clave privada encriptada con la contraseña
+        newkv=encrypt.get_private_key()
+        newku=encrypt.get_public_key(newkv)
+        newkv = str(base64.b64encode(str(newkv).encode("utf-8")))
+        newku = str(base64.b64encode(str(newku).encode("utf-8")))
+        user_item = {"username": usurname, "password": passw, "salt":newsalt,
+                     "kv":newkv ,"ku":newku}
         return user_item
 
     def compare_passw(self, item1: dict, item2: dict) -> bool:

@@ -18,7 +18,7 @@ class Film:
         :return:
         """
         # First, creates the review
-        new_film = self.create_film_item
+        new_film = self.create_film_item()
         store = JsonStore(film_path)
         # Search if the user have previus reviews
         user_data = store.find_item("title", new_film)
@@ -35,5 +35,6 @@ class Film:
         Creates a new dictionary item with the film
         :return: the new dict
         """
-        new_review = {"title": self.title, "creador": self.creador, "firma": self.firma}
-        return new_review
+        new_film = {"title": self.title, "creador": self.creador}
+        """, "firma": self.firma"""
+        return new_film

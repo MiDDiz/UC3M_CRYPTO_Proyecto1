@@ -5,6 +5,7 @@ from review import Review
 from user import User
 import customtkinter as customtk
 import encrypt
+from film import Film
 
 img_path = pathlib.Path().resolve().parent / "images/"
 
@@ -535,3 +536,6 @@ class Interface(customtk.CTk):
 
     def critem_generate(self):
         title = self.critem_review.textbox.get("1.0", tkinter.END)
+        new_film = Film(title)
+        new_film.creador = self.curr_user.username
+        new_film.store_film()
