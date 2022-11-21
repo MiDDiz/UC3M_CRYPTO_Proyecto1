@@ -47,7 +47,7 @@ class Interface(customtk.CTk):
                 self._show_password_error_msg()
                 self.login_passwd_entry.bind("<Button-1>", self._hide_password_error_msg)
                 return
-            print("Bienbenido, nuevo usuario!")
+            print("Bienvenido, nuevo usuario!")
             # It stores the new user data in the json
             User.store_user(in_usr, hash_passw)
             # Then updates the data variable
@@ -402,7 +402,7 @@ class Interface(customtk.CTk):
         self.mainmenu_button_crfilm = customtk.CTkButton(master=self.mainmenu_rightframe,
                                                       text="Crear película",
                                                       height=30,
-                                                      command=self.go_to_create_film)
+                                                      command=self.go_to_ask_password)
 
         self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
@@ -489,10 +489,6 @@ class Interface(customtk.CTk):
         canvas.pack(fill='both', expand=True, side='left')
         scrolly.pack(fill='y', side='right')
 
-    def go_to_create_film(self):
-        self.mainmenu_frame.destroy()
-        self._create_crfilm_Activity()
-
 
     def _create_crfilm_Activity(self):
 
@@ -530,12 +526,69 @@ class Interface(customtk.CTk):
                                                       command=lambda: self.goback(self.crfilm_frame))
         self.critem_back_button.grid(row=0, column=1, pady=40, padx=180, sticky="nwe")
 
-    def goback(self, frame):
-        frame.destroy()
-        self._create_mainmenu_Activity()
 
     def critem_generate(self):
         title = self.critem_review.textbox.get("1.0", tkinter.END)
         new_film = Film(title)
         new_film.creador = self.curr_user.username
         new_film.store_film()
+
+    def go_to_ask_password(self):
+        self.mainmenu_frame.destroy()
+        self._ask_password_Activity()
+
+    def _ask_password_Activity(self):
+
+        self.passw_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
+        self.passw_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
+        self.passw_frame.rowconfigure(0, weight=0)
+        self.passw_frame.rowconfigure(1, weight=0)
+        self.passw_frame.rowconfigure(2, weight=0)
+
+        self.passw_label_review = customtk.CTkLabel(master=self.passw_frame,
+                                                      text="Escribe tu contraseña: ",
+                                                      text_font=("Roboto Medium", -16),
+                                                      padx=15, pady=15)
+        self.passw_label_review.grid(column=0, row=0, sticky="nw", padx=20, pady=20)
+        self.passw_get = customtk.CTkEntry(master=self.passw_frame,
+                                                    width=6,
+                                                    text_font=("Roboto Medium", -16),
+                                                    placeholder_text="Contraseña",
+                                                    show="*"
+                                                    )
+        self.passw_get.grid(column=0, row=1, sticky="news", padx=20, pady=5)
+
+        self.passw_submitframe = customtk.CTkFrame(master=self.passw_frame)
+        self.passw_submitframe.grid(column=0, row=2, sticky="nwes", padx=10, pady=20)
+        self.passw_submitframe.columnconfigure(0, weight=0)
+        self.passw_submitframe.columnconfigure(1, weight=0)
+
+
+        self.passw_sumbit_button = customtk.CTkButton(master=self.passw_submitframe,
+                                                        text="Enviar",
+                                                        command=self.check_and_get_passw)
+        self.passw_sumbit_button.grid(row=0, column=0, pady=40, padx=180, sticky="nwe")
+        self.passw_back_button = customtk.CTkButton(master=self.passw_submitframe,
+                                                      text="Atras",
+                                                      command=lambda: self.goback(self.passw_frame))
+        self.passw_back_button.grid(row=0, column=1, pady=40, padx=180, sticky="nwe")
+
+    def check_and_get_passw(self):
+        passw = self.passw_get.get()
+        hash_passw = encrypt.password_hash(passw)
+        user_item= User.user_exists(self.curr_user.username)
+        if user_item==None:
+            print("Error al encontrar el usuario actual!")
+            return
+        elif user_item["password"]!=hash_passw:
+            print("Contraseña incorrecta!")
+            return
+        self.passw_frame.destroy()
+        self._create_crfilm_Activity()
+
+
+
+    def goback(self, frame):
+        frame.destroy()
+        self._create_mainmenu_Activity()
