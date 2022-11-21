@@ -3,6 +3,7 @@ import tkinter
 from PIL import Image, ImageTk
 
 import film
+import json_store
 from review import Review
 from user import User
 import customtkinter as customtk
@@ -10,6 +11,7 @@ import encrypt
 from film import Film
 
 img_path = pathlib.Path().resolve().parent / "images/"
+review_path = pathlib.Path().resolve().parent / "storage/items.json"
 
 import tkinter as tk
 
@@ -59,7 +61,6 @@ class Interface(customtk.CTk):
             if (data_user["password"] == hash_passw):
                 print("Sesión iniciada")
             else:
-                # TODO: Mensaje de usuario existe pero contraseña incorrecta
                 print("Contraseña incorrecta")
                 return
         # Now, generate the datakey for the user
@@ -370,6 +371,10 @@ class Interface(customtk.CTk):
         self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
     def go_to_see_reviews(self):
+        store = json_store.JsonStore(review_path)
+        if(store.find_item_usr(self.curr_user.username)==None):
+            print("No hay reviews")
+            return
         self.mainmenu_frame.destroy()
         self._create_viewrev_Activity()
 
@@ -504,6 +509,7 @@ class Interface(customtk.CTk):
 
         new_film.sign_film(self.curr_user.get_private_key(passwd))
         new_film.store_film()
+        self.goback(self.crfilm_frame)
 
     def go_to_ask_password(self):
         self.mainmenu_frame.destroy()
