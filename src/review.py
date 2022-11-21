@@ -2,6 +2,7 @@ import json
 import pathlib
 from json_store import JsonStore
 import encrypt
+from encrypt import text_to_bytes, b64text_to_bytes, bytes_to_text
 import base64
 
 #review_path = "D:/Universidad/3º Curso/Criptografia/Proyecto_final/storage/items.json"
@@ -35,7 +36,7 @@ class Review:
         user_reviews.append(new_rev)
         # Encrypt user reviews
         (in_vector, user_reviews_encrypted) = encrypt.encrypt_data(self.user.data_key,
-                                                                   base64.b64encode(str(user_reviews).encode("utf-8")))
+                                                                   text_to_bytes(str(user_reviews)))
         # Then creates a new entry in items with the user and his first review
         store.addnew(self.update_reviews(user_reviews_encrypted, in_vector))
 
@@ -59,15 +60,15 @@ class Review:
             # If is a new review, it appends it to the previous ones
             user_reviews.append(new_rev)
         (in_vector, user_reviews_encrypted) = encrypt.encrypt_data(self.user.data_key,
-                                                                   base64.b64encode(str(user_reviews).encode("utf-8")))
+                                                                   text_to_bytes(str(user_reviews)))
         # Then, saves the new list of reviews instead of the old ones
         store.replace_item(user_data, self.update_reviews(user_reviews_encrypted, in_vector))
 
     def decode_actual_userdata(self, user_data):
         # If it have previus reviews, open the list of reviews
         # string to bytes
-        encrypted_reviews = base64.decodebytes(user_data["reviews"].encode("utf-8"))
-        init_vector = base64.decodebytes(user_data["iv"].encode("utf-8"))
+        encrypted_reviews = b64text_to_bytes(user_data["reviews"])
+        init_vector = b64text_to_bytes(user_data["iv"])
         # [{"title": algo, "review":otro, "score":otra},{...},...]
         # We get the chunk above of data encrypted and we decrypt it into a str
         data_decripted = encrypt.decrypt_data(self.user.data_key, init_vector, encrypted_reviews)
@@ -117,7 +118,7 @@ class Review:
         """
         new_user_review = {
             "username": self.user.username,
-            "reviews": base64.b64encode(user_reviews).decode("utf-8"),
-            "iv": (base64.b64encode(input_vector)).decode("utf-8")
+            "reviews": bytes_to_text(user_reviews),
+            "iv": bytes_to_text(input_vector)
         }
         return new_user_review
