@@ -410,8 +410,8 @@ class Interface(customtk.CTk):
 
         # display elements in the canvas
         for i, item in enumerate(user_reviews):
-            print(f"I: {i}, Item: {item} ")
 			item = Review.decode_review(item)
+            print(f"I: {i}, Item: {item} ")
             viewrev_revframes.append(customtk.CTkFrame(
                 master=canvas,
                 width=Interface.WIDTH,
