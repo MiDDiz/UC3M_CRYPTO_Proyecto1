@@ -152,6 +152,15 @@ def bytes_to_text(stream: bytes):
     """
     return base64.b64encode(stream).decode("utf-8")
 
+def text_to_b64text(text: str):
+	"""
+	Sometimes we need to store JSON sensive text so we parse it to safe Base64 and store it that way.
+	Also it serves as obfuscation
+	"""
+	return text_to_bytes(text).decode("utf-8")
+
+def b64text_to_text(text: str):
+	return b64text_to_bytes(text).decode("utf-8")
 
 def serialized_public_key(ku: RSAPublicKey) -> bytes:
     return ku.public_bytes(
