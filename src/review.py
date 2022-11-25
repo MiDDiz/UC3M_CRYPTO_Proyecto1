@@ -65,7 +65,7 @@ class Review:
         store.replace_item(user_data, self.update_reviews(user_reviews_encrypted, in_vector))
 
     def decode_actual_userdata(self, user_data):
-        # If it have previus reviews, open the list of reviews
+        # If it have previous reviews, open the list of reviews
         # string to bytes
         encrypted_reviews = b64text_to_bytes(user_data["reviews"])
         init_vector = b64text_to_bytes(user_data["iv"])
@@ -93,7 +93,7 @@ class Review:
     def find_single_review(self, username:str, title:str):
         user_reviews=self.find_user_reviews(username)
         for rev in user_reviews:
-            if rev["title"]==title:
+            if rev["title"] == title:
                 return rev
         return None
 
