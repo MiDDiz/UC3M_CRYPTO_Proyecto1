@@ -1,9 +1,0 @@
-[
-  {
-    "username": "Hola",
-    "password": "b'9\\xc7emh\\xe7\\xde\\xf3\\x02\\xf6\\x89\\xfbz\\xa9c\\xaf;/m(i\\xc5\\x97v`k\\x83e\\xce@\\xc4\\xf1'",
-    "salt": "b'\\xc7\\xad\\x82\\x90\\xd3\\x8a\\xb9Z\\xd1/\\xf1\\x12\\xcb\\xfa\\xeb\\x02\\xfc!\\xc8\\xf4\\xd9\\xea\\x1c\\xc4\\x90\\x9c\\xb2k^z\\xcc\\x94'",
-    "kv": "b'PGNyeXB0b2dyYXBoeS5oYXptYXQuYmFja2VuZHMub3BlbnNzbC5yc2EuX1JTQVByaXZhdGVLZXkgb2JqZWN0IGF0IDB4MDAwMDAxQzcwMUNBRUU5MD4='",
-    "ku": "b'Tm9uZQ=='"
-  }
-]

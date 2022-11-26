@@ -122,12 +122,31 @@ class Review:
             "iv": bytes_to_text(input_vector)
         }
         return new_user_review
-	
-	@staticmethod
-	def decode_review(review: dict):
-		"""
-		Transforms a dict holding a base64 encoded review to a decoded dict review
-		"""
-		review["title"] = encrypt.b64text_to_text(review["title"])
-		review["text"] = encrypt.b64text_to_text(review["text"])
-		return review
+
+    @staticmethod
+    def decode_review(review: dict):
+        """
+        Transforms a dict holding a base64 encoded review to a decoded dict review
+        """
+        review["title"] = encrypt.b64text_to_text(review["title"])
+        review["text"] = encrypt.b64text_to_text(review["text"])
+        return review
+
+    @staticmethod
+    def parse_title(title: str):
+        """
+        Makes the title bareable for the interface
+        :param title:
+        :return:
+        """
+        newtitle =  ""
+        paragraph_len = 0
+        for word in title.split(" "):
+            if (len(word) > 25):
+                while len(word):
+                    newtitle += word[:24]
+                    newtitle += "\n" if len(word) < 24 else "-\n"
+                    word = word[24:]
+            if (len(word) + paragraph_len) > 25:
+                pass
+
