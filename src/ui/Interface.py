@@ -9,6 +9,7 @@ import customtkinter as customtk
 import encrypt
 from film import Film
 import tkinter as tk
+from functools import partial
 
 img_path = pathlib.Path().resolve().parent / "images/"
 review_path = pathlib.Path().resolve().parent / "storage/items.json"
@@ -30,6 +31,7 @@ class Interface(customtk.CTk):
 
     def prompt_new_review(self, title):
         # Go to newitem activity
+        print(f"Got: {title}")
         self._create_new_item_Activity(title)
 
     def entry_event(self):
@@ -317,9 +319,12 @@ class Interface(customtk.CTk):
         film_buttons = []
         film_frames = []
         column_flag = 0
+
+        title_list = []
+
         row_start = 10
         # generate film buttons
-        for film in all_films:
+        for i, film in enumerate(all_films):
             # first check signature
             signature = encrypt.text_to_bytes(film["signature"])
             creador = User.user_exists(film["creador"])
@@ -340,20 +345,19 @@ class Interface(customtk.CTk):
                     corner_radius=0
                 )
             )
-            pasrsedTitle = film["title"] # if len(film["title"]) <= 25 else Review.parseTitle(film["title"])
+            title_list.append(film["title"])
             film_buttons.append(
                 customtk.CTkButton(
                     # master is last appended frame
-                    master=film_frames[-1],
+                    master=film_frames[i],
                     image=self.default_img,
-                    text=pasrsedTitle,
+                    text=title_list[i],
                     height=152,
                     width=255,
-                    compound="right", command=lambda: self.prompt_new_review(film["title"])
+                    compound="right", command=partial(self.prompt_new_review, all_films[i]["title"])
                 )
             )
-            film_buttons[-1].grid(column=0, row=0, sticky="news", padx=20, pady=20)
-
+            film_buttons[i].grid(column=i, row=0, sticky="news", padx=20, pady=20)
             canvas.create_window(10 + column_flag * 295 , row_start + 10, anchor='n', window=film_frames[-1],
                                  height=180, width=295)
             row_start += 152 * column_flag
@@ -361,6 +365,7 @@ class Interface(customtk.CTk):
         canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
         canvas.pack(fill='both', expand=True, side='left')
         scrolly.pack(fill='y', side='right')
+
         """
         film_gird_x = 0
         film_gird_y = 0
@@ -384,6 +389,7 @@ class Interface(customtk.CTk):
                                                       height=30,
                                                       command=self.go_to_ask_password)
         self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+
 
     def go_to_see_reviews(self):
         store = json_store.JsonStore(review_path)
