@@ -301,23 +301,24 @@ class Interface(customtk.CTk):
         self.mainmenu_leftframe.grid(column=0, row=0, sticky="nwes", padx=10, pady=20)
         self.mainmenu_centralframe.grid(column=1, row=0, sticky="nwes", padx=10, pady=20)
         self.mainmenu_rightframe.grid(column=2, row=0, sticky="nwes", padx=10, pady=20)
-
-        self.mainmenu_centralframe.rowconfigure(0, weight=0)
-        self.mainmenu_centralframe.rowconfigure(1, weight=0)
-        self.mainmenu_centralframe.rowconfigure(2, weight=0)
-        self.mainmenu_centralframe.columnconfigure(0, weight=0)
-        self.mainmenu_centralframe.rowconfigure(1, weight=0)
-        self.mainmenu_centralframe.rowconfigure(2, weight=0)
-
-        # generate img
+        # self.mainmenu_centralframe.rowconfigure(0, weight=0)
+        # self.mainmenu_centralframe.rowconfigure(1, weight=0)
+        # self.mainmenu_centralframe.rowconfigure(2, weight=0)
+        # self.mainmenu_centralframe.columnconfigure(0, weight=0)
+        # self.mainmenu_centralframe.columnconfigure(1, weight=0)
+        # self.mainmenu_centralframe.columnconfigure(2, weight=0)
+		# generate img
         self.default_img = self.load_image("avatar.jpg", 80, 100)
-
+        canvas = tk.Canvas(self.mainmenu_centralframe, bg="black", width=700, height=self.HEIGHT-30, highlightthickness=0)
+        scrolly = tk.Scrollbar(self.mainmenu_centralframe, orient='vertical', command=canvas.yview)
         # dynamically generate a film button for each film stored
-
         all_films = Film.get_all_films()
         film_buttons = []
-
-        for film in all_films:
+		film_frames = []
+		column_flag = 0
+		row_start = 10
+        # generate film buttons
+		for film in all_films:
             # first check signature
             signature = encrypt.text_to_bytes(film["signature"])
             creador = User.user_exists(film["creador"])
@@ -329,17 +330,36 @@ class Interface(customtk.CTk):
                 public_key=encrypt.deserialize_public_key(creador["ku"])
             )
             if not check:
-                # Check for signature faild -> Malicious database
+                # Check for signature faild -> Malicious database. Inside check raises error
                 pass
+			film_frames.append(
+				customtk.CTkFrame(
+            		master=canvas,
+            		width=340,
+            		corner_radius=5
+            	)
+			)
             film_buttons.append(
-                customtk.CTkButton(master=self.mainmenu_centralframe,
-                                   image=self.default_img,
-                                   text=film["title"],
-                                   height=152,
-								   width=200,
-                                   compound="right", command=lambda: self.prompt_new_review(film["title"]))
+                customtk.CTkButton(
+					# master is last appended frame
+					master=film_frames[-1],
+                    image=self.default_img,
+                    text=film["title"],
+                    height=152,
+					width=300,
+                    compound="right", command=lambda: self.prompt_new_review(film["title"])
+				)
             )
+			film_buttons[-1].grid(column=0, row=0, sticky="news", padx=20, pady=20)
 
+			canvas.create_window(10 + column_flag * 320 , row_start + 10, anchor='nwse', window=film_frames[-1],
+                                 height=180, width=340)
+			row_start += 152
+			column_flag = 0 if column_flag else 1
+        canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
+        canvas.pack(fill='both', expand=True, side='left')
+        scrolly.pack(fill='y', side='right')
+		"""
         film_gird_x = 0
         film_gird_y = 0
         for btn_elem in film_buttons:
@@ -349,9 +369,7 @@ class Interface(customtk.CTk):
             if film_gird_y == 3:
                 film_gird_y = 0
                 film_gird_x += 1
-
-
-
+				"""
         # end btn imgs
         # button to see reviews
         self.mainmenu_button_rev = customtk.CTkButton(master=self.mainmenu_rightframe,
@@ -359,13 +377,10 @@ class Interface(customtk.CTk):
                                                       height=30,
                                                       command=self.go_to_see_reviews)
         self.mainmenu_button_rev.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
-
-
         self.mainmenu_button_crfilm = customtk.CTkButton(master=self.mainmenu_rightframe,
                                                       text="Crear película",
                                                       height=30,
                                                       command=self.go_to_ask_password)
-
         self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
     def go_to_see_reviews(self):
