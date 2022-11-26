@@ -335,7 +335,7 @@ class Interface(customtk.CTk):
 			film_frames.append(
 				customtk.CTkFrame(
             		master=canvas,
-            		width=340,
+            		width=220,
             		corner_radius=5
             	)
 			)
@@ -346,14 +346,14 @@ class Interface(customtk.CTk):
                     image=self.default_img,
                     text=film["title"],
                     height=152,
-					width=300,
+					width=200,
                     compound="right", command=lambda: self.prompt_new_review(film["title"])
 				)
             )
 			film_buttons[-1].grid(column=0, row=0, sticky="news", padx=20, pady=20)
 
-			canvas.create_window(10 + column_flag * 320 , row_start + 10, anchor='nwse', window=film_frames[-1],
-                                 height=180, width=340)
+			canvas.create_window(10 + column_flag * 220 , row_start + 10, anchor='nwse', window=film_frames[-1],
+                                 height=180, width=220)
 			row_start += 152
 			column_flag = 0 if column_flag else 1
         canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
