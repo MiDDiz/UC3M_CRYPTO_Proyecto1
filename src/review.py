@@ -16,12 +16,12 @@ class Review:
         """
         Creates a new review, and stores it to the input.txt
         :param title:
-        :param text:
+        :param text: -> Text needs to be converted to Base64
         :param rating:
         :return:
         """
         # First, creates the review
-        new_rev = self.create_review_item(title, text, rating)
+        new_rev = self.create_review_item(encrypt.text_to_b64text(title), encrypt.text_to_b64text(text), rating)
         store = JsonStore(review_path)
         # Search if the user have previus reviews
         user_data = store.find_item_usr(self.user.username)
@@ -122,3 +122,9 @@ class Review:
             "iv": bytes_to_text(input_vector)
         }
         return new_user_review
+	
+	@staticmethod
+	def decode_review(review: dict):
+		review["title"] = encrypt.b64text_to_text(review["title"])
+		review["text"] = encrypt.b64text_to_text(review["text"])
+		return review

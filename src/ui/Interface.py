@@ -24,11 +24,9 @@ class Interface(customtk.CTk):
         self.destroy()
 
     def prompt_new_review(self, title):
-
         self._create_new_item_Activity(title)
 
     def entry_event(self):
-        # TODO: Eliminar prints
         """
         Here can happen 3 things:
             - New user -> Generate new user and continue as normal
@@ -36,10 +34,9 @@ class Interface(customtk.CTk):
             - Old user bad info -> We got bad info, we need to notify it and wait again for an entry_event.
         :return: None
         """
-
+		#TODO: This logic should not be handled by an interface method!!! Maybe refactor into user?
         in_usr = self.login_user_entry.get()
         in_passwd = self.login_passwd_entry.get()
-
         # generates the hash of the pasword
         hash_passw = encrypt.password_hash(in_passwd)
         # Checks if the user exist
@@ -77,10 +74,13 @@ class Interface(customtk.CTk):
 
     def newitem_generate(self):
         title = self.newitem_title_label.text
+		"""
         # Low cost sanitizer
         review = self.newitem_review.textbox.get("1.0", tkinter.END).\
             replace("\"", "").replace("'", "").replace(":", "")\
             .replace("{", "").replace("}", "").replace("[", "").replace("]", "")
+			"""
+		
         score = self.newitem_score_var.get()
         new_review = Review(self.curr_user)
         new_review.store_review(title, review, str(score))
@@ -339,6 +339,7 @@ class Interface(customtk.CTk):
                                    image=self.default_img,
                                    text=film["title"],
                                    height=152,
+								   width=200,
                                    compound="right", command=lambda: self.prompt_new_review(film["title"]))
             )
 
@@ -409,6 +410,7 @@ class Interface(customtk.CTk):
 
         # display elements in the canvas
         for i, item in enumerate(user_reviews):
+			item = Review.decode_review(item)
             print(f"I: {i}, Item: {item} ")
             viewrev_revframes.append(customtk.CTkFrame(
                 master=canvas,
