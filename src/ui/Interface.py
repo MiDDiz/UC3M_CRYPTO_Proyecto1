@@ -202,6 +202,7 @@ class Interface(customtk.CTk):
         Esta es la funcion principal de create new Item
         :return:
         """
+
         # main frame
         self.newitem_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         self.newitem_frame.columnconfigure(0, weight=0)
@@ -389,7 +390,16 @@ class Interface(customtk.CTk):
                                                       height=30,
                                                       command=self.go_to_ask_password)
         self.mainmenu_button_crfilm.grid(row=1, column=0, columnspan=1, padx=10, pady=10, sticky="news")
+        self.mainmenu_button_clsesion = customtk.CTkButton(master=self.mainmenu_rightframe,
+                                                         text="Cerrar sesión",
+                                                         height=30,
+                                                         command=self.close_sesion)
+        self.mainmenu_button_clsesion.grid(row=2, column=0, columnspan=1, padx=10, pady=10, sticky="news")
 
+    def close_sesion(self):
+        self.curr_user=None
+        self.mainmenu_frame.destroy()
+        self._create_entrform()
 
     def go_to_see_reviews(self):
         store = json_store.JsonStore(review_path)
