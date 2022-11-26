@@ -15,9 +15,9 @@ class Review:
     def store_review(self, title: str, text: str, rating: str):
         """
         Creates a new review, and stores it to the input.txt
-        :param title:
-        :param text: -> Text needs to be converted to Base64
-        :param rating:
+        :param title: -> Ttile needs to be converted to Base64 text (JSON protection)
+        :param text: -> Text needs to be converted to Base64 text (JSON protection)
+        :param rating: -> Rating input is hardcoded
         :return:
         """
         # First, creates the review
@@ -125,6 +125,9 @@ class Review:
 	
 	@staticmethod
 	def decode_review(review: dict):
+		"""
+		Transforms a dict holding a base64 encoded review to a decoded dict review
+		"""
 		review["title"] = encrypt.b64text_to_text(review["title"])
 		review["text"] = encrypt.b64text_to_text(review["text"])
 		return review
