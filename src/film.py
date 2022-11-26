@@ -58,7 +58,7 @@ class Film:
 
     @staticmethod
     def get_all_films() -> list:
-		"""
-		Method that returns a list with all the films in dict form
-		"""
+        """
+        Method that returns a list with all the films in dict form
+        """
         return JsonStore(film_path).load_data()
