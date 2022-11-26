@@ -9,6 +9,10 @@ from os import urandom
 
 
 def password_hash(passw: str) -> str:
+	"""
+	Return a string representation of the hash of passw.
+	We use this method to hash passwords.
+	"""
     passwb = str.encode(passw)
     digest = hashes.Hash(hashes.SHA256())
     digest.update(passwb)
@@ -18,6 +22,9 @@ def password_hash(passw: str) -> str:
 
 
 def generate_salt() -> str:
+	"""
+	Generate and stringify a salt
+	"""
     newsalt = urandom(32)
     newsalt = str(newsalt)
     return newsalt
@@ -106,6 +113,9 @@ def sign_message(message: bytes, private_key: RSAPrivateKey) -> bytes:
 
 
 def verify_signature(signature: bytes, message: bytes, public_key: RSAPublicKey) -> bool:
+	"""
+	Checks whether the signature was made with the message and the private key that public_key represents.
+	"""
     try:
         public_key.verify(
             signature,
@@ -122,7 +132,7 @@ def verify_signature(signature: bytes, message: bytes, public_key: RSAPublicKey)
         # Simply put the signature is invalid
         return False
     except Exception as e:
-        # Unexpected error
+        # Unexpected error -> We catch everything and re-raise it 
         raise ValueError("Fatal error handling verification signature") from e
 
 
@@ -160,9 +170,16 @@ def text_to_b64text(text: str):
 	return text_to_bytes(text).decode("utf-8")
 
 def b64text_to_text(text: str):
+	"""
+	When we have b64text stored in a JSON file we would like to have the text de-encoded
+	This method returns the plaintext message encoded on text from a base64 encoding.
+	"""
 	return b64text_to_bytes(text).decode("utf-8")
 
 def serialized_public_key(ku: RSAPublicKey) -> bytes:
+	"""
+	Encapsulation for getting the serialized public key from our RSAPublicKey object
+	"""
     return ku.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
@@ -170,12 +187,18 @@ def serialized_public_key(ku: RSAPublicKey) -> bytes:
 
 
 def deserialize_public_key(serialized_public_key: str) -> RSAPublicKey:
+	"""
+	Encapsulation for getting the RSAPublicKey object from the stored serialized public key
+	"""
     return serialization.load_pem_public_key(
         serialized_public_key.encode("utf-8")
     )
 
 
 def serialize_private_key(private_key: RSAPrivateKey, passwd: bytes) -> bytes:
+	"""
+	Encapsulation for getting the serialized private key from our RSAPrivateKey object while encrypting it with the password
+	"""
     return private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
@@ -184,6 +207,9 @@ def serialize_private_key(private_key: RSAPrivateKey, passwd: bytes) -> bytes:
 
 
 def deserialize_private_key(serialized_private_key: str, passwd: bytes) -> RSAPrivateKey:
+	"""
+	De-encription and deserialization of the private key stored. We use the password to decript it.
+	"""
     print(f"Obtenemos: \n{serialized_private_key}\n\n\n\n")
     #print(text_to_bytes(serialized_private_key).decode("utf-8"))
     return serialization.load_pem_private_key(

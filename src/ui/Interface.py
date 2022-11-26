@@ -1,7 +1,6 @@
 import pathlib
 import tkinter
 from PIL import Image, ImageTk
-
 import film
 import json_store
 from review import Review
@@ -9,25 +8,33 @@ from user import User
 import customtkinter as customtk
 import encrypt
 from film import Film
+import tkinter as tk
 
 img_path = pathlib.Path().resolve().parent / "images/"
 review_path = pathlib.Path().resolve().parent / "storage/items.json"
-
-import tkinter as tk
 
 class Interface(customtk.CTk):
     WIDTH = 1024
     HEIGHT = 768
 
+	def __init__(self):
+		# Generate initial hooks, generate entry login form
+        super().__init__()
+        self._initial_hooks()
+        self._create_entrform()
+
     def on_closing(self, event=0):
+		# Cleanup
         self.curr_user = None
         self.destroy()
 
     def prompt_new_review(self, title):
+		# Go to newitem activity
         self._create_new_item_Activity(title)
 
     def entry_event(self):
         """
+		Login entry logic
         Here can happen 3 things:
             - New user -> Generate new user and continue as normal
             - Old user good passwd -> We got an old user correct info and continue as normal
@@ -73,24 +80,14 @@ class Interface(customtk.CTk):
         return ImageTk.PhotoImage(Image.open(img_path / path).resize((image_size_x, image_size_y)))
 
     def newitem_generate(self):
-        title = self.newitem_title_label.text
 		"""
-        # Low cost sanitizer
-        review = self.newitem_review.textbox.get("1.0", tkinter.END).\
-            replace("\"", "").replace("'", "").replace(":", "")\
-            .replace("{", "").replace("}", "").replace("[", "").replace("]", "")
-			"""
-		
+			helper function to create a new item
+		"""
+        title = self.newitem_title_label.text
         score = self.newitem_score_var.get()
         new_review = Review(self.curr_user)
         new_review.store_review(title, review, str(score))
         self.goback(self.newitem_frame)
-
-    def __init__(self):
-        super().__init__()
-
-        self._initial_hooks()
-        self._create_entrform()
 
     def _initial_hooks(self):
         self.title("Netlix's Library")
@@ -380,43 +377,40 @@ class Interface(customtk.CTk):
         self._create_viewrev_Activity()
 
     def _create_viewrev_Activity(self):
-
+		"""
+		Interface to see the reviews that the user had generated
+		"""
         self.viewrev_main = customtk.CTkFrame(master=self, width=Interface.WIDTH)
-
         self.viewrev_main.grid(row=0, column=0, columnspan=1, sticky="news")
-
-
         self.viewrev_frame = customtk.CTkFrame(master=self.viewrev_main, width=Interface.WIDTH)
-
-
-
         self.viewrev_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
-
+		# back button
         self.viewrev_backbutton = customtk.CTkButton(master=self.viewrev_main,
                                                      text="Ir atrás",
                                                      command=lambda : self.goback(self.viewrev_main)
                                                      )
-
         self.viewrev_backbutton.grid(row=0, column=1, columnspan=1, padx=10, pady=10, sticky="e")
-
+		# we need to have an infinite scroll for each review generated so we need a canvas
         canvas = tk.Canvas(self.viewrev_frame, bg="black", width=self.WIDTH - 200, height=self.HEIGHT-30, highlightthickness=0)
         scrolly = tk.Scrollbar(self.viewrev_frame, orient='vertical', command=canvas.yview)
-
         reviews = Review(self.curr_user)
         user_reviews = reviews.find_user_reviews(self.curr_user.username)
-
+		# Dinamically store the review label and frames used to display them
         viewrev_revframes = []
         viewrev_labels = []
-
         # display elements in the canvas
         for i, item in enumerate(user_reviews):
+			# Remember that reviews are encoded in order to sanitize 'em for JSON
 			item = Review.decode_review(item)
+			# We left this print to see in terminal what is happening in the background
             print(f"I: {i}, Item: {item} ")
+			# Append the frame
             viewrev_revframes.append(customtk.CTkFrame(
                 master=canvas,
                 width=Interface.WIDTH,
                 corner_radius=5
             ))
+			# Append the title
             viewrev_labels.append([])
             viewrev_labels[i].append(
                 customtk.CTkLabel(
@@ -427,6 +421,7 @@ class Interface(customtk.CTk):
                     justify=tkinter.LEFT
                 )
             )
+			# Append the review
             viewrev_labels[i].append(
                 customtk.CTkLabel(
                     master=viewrev_revframes[i],
@@ -437,6 +432,7 @@ class Interface(customtk.CTk):
                     wraplength=800
                 )
             )
+			# Append the score
             viewrev_labels[i].append(
                 customtk.CTkLabel(
                     master=viewrev_revframes[i],
@@ -446,29 +442,29 @@ class Interface(customtk.CTk):
                     justify=tkinter.LEFT
                 )
             )
+			# Set them on display their frame
             viewrev_labels[i][0].grid(column=0, row=0, sticky="news", padx=20, pady=20)
             viewrev_labels[i][1].grid(column=0, row=1, sticky="news", padx=20, pady=20)
             viewrev_labels[i][2].grid(column=0, row=2, sticky="news", padx=20, pady=20)
+			# Set the frame on the canvas
             canvas.create_window(100, i * 350, anchor='nw', window=viewrev_revframes[i],
                                  height=300, width=self.WIDTH - 180)
             viewrev_labels.append([])
-
-
-
+		# When canvas is filled, we can display it.
         canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
         canvas.pack(fill='both', expand=True, side='left')
         scrolly.pack(fill='y', side='right')
 
 
     def _create_crfilm_Activity(self, passwd: str):
-
+		"""
+		Interface to generate a new film
+		"""
         self.crfilm_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         self.crfilm_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
-
         self.crfilm_frame.rowconfigure(0, weight=0)
         self.crfilm_frame.rowconfigure(1, weight=1)
         self.crfilm_frame.rowconfigure(2, weight=0)
-
         self.critem_label_review = customtk.CTkLabel(master=self.crfilm_frame,
                                                       text="Escribe el título de la nueva película: ",
                                                       text_font=("Roboto Medium", -16),
@@ -480,13 +476,10 @@ class Interface(customtk.CTk):
                                                   text_font=("Roboto Medium", -16),
                                                   )
         self.critem_review.grid(column=0, row=1, sticky="news", padx=20, pady=5)
-
         self.critem_submitframe = customtk.CTkFrame(master=self.crfilm_frame)
         self.critem_submitframe.grid(column=0, row=2, sticky="nwes", padx=10, pady=20)
         self.critem_submitframe.columnconfigure(0, weight=0)
         self.critem_submitframe.columnconfigure(1, weight=0)
-
-
         self.critem_sumbit_button = customtk.CTkButton(master=self.critem_submitframe,
                                                         text="Enviar",
                                                         command=lambda: self.critem_generate(passwd))
@@ -508,7 +501,6 @@ class Interface(customtk.CTk):
             print("No se puede generar una pelicula con titulo vacío")
             return
         new_film = Film(title, self.curr_user.username)
-
         new_film.sign_film(self.curr_user.get_private_key(passwd))
         new_film.store_film()
         self.goback(self.crfilm_frame)
@@ -518,14 +510,11 @@ class Interface(customtk.CTk):
         self._ask_password_Activity()
 
     def _ask_password_Activity(self):
-
         self.passw_frame = customtk.CTkFrame(master=self, width=Interface.WIDTH)
         self.passw_frame.grid(row=0, column=0, columnspan=1, padx=10, pady=10, sticky="news")
-
         self.passw_frame.rowconfigure(0, weight=0)
         self.passw_frame.rowconfigure(1, weight=0)
         self.passw_frame.rowconfigure(2, weight=0)
-
         self.passw_label_review = customtk.CTkLabel(master=self.passw_frame,
                                                       text="Escribe tu contraseña: ",
                                                       text_font=("Roboto Medium", -16),
@@ -538,13 +527,10 @@ class Interface(customtk.CTk):
                                                     show="*"
                                                     )
         self.passw_get.grid(column=0, row=1, sticky="news", padx=20, pady=5)
-
         self.passw_submitframe = customtk.CTkFrame(master=self.passw_frame)
         self.passw_submitframe.grid(column=0, row=2, sticky="nwes", padx=10, pady=20)
         self.passw_submitframe.columnconfigure(0, weight=0)
         self.passw_submitframe.columnconfigure(1, weight=0)
-
-
         self.passw_sumbit_button = customtk.CTkButton(master=self.passw_submitframe,
                                                         text="Enviar",
                                                         command=self.check_and_get_passw)
@@ -556,7 +542,6 @@ class Interface(customtk.CTk):
 
     def check_and_get_passw(self):
         passw = self.passw_get.get()
-
         hash_passw = encrypt.password_hash(passw)
         user_item= User.user_exists(self.curr_user.username)
         if user_item==None:
@@ -567,8 +552,6 @@ class Interface(customtk.CTk):
             return
         self.passw_frame.destroy()
         self._create_crfilm_Activity(passw)
-
-
 
     def goback(self, frame):
         frame.destroy()
